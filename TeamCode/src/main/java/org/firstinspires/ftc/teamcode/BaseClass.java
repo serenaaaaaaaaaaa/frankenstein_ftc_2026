@@ -64,7 +64,6 @@ public class BaseClass extends LinearOpMode {
         // 4. Cleanup: Auto-retract linear slides when the user stops the OpMode
         telemetry.addData("Status", "Retracting Slides Safely...");
         telemetry.update();
-        linearModule.retractOnStop();
     }
 
     /**
