@@ -4,7 +4,7 @@ import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import java.util.List;
@@ -26,8 +26,8 @@ public class BaseClass extends LinearOpMode {
     protected DcMotor rightSlide = null;
 
     // Intake Motors
-    protected Servo leftIntake = null;
-    protected Servo rightIntake = null;
+    protected CRServo leftIntake = null;
+    protected CRServo rightIntake = null;
 
     // Component Instances
     private Drive driveModule;
@@ -100,8 +100,8 @@ public class BaseClass extends LinearOpMode {
         leftSlide = hardwareMap.get(DcMotor.class, "leftSlide");
         rightSlide = hardwareMap.get(DcMotor.class, "rightSlide");
 
-        leftIntake = hardwareMap.get(Servo.class, "leftIntake");
-        rightIntake = hardwareMap.get(Servo.class, "rightIntake");
+        leftIntake = hardwareMap.get(CRServo.class, "leftIntake");
+        rightIntake = hardwareMap.get(CRServo.class, "rightIntake");
         
         // Encoders initialization is fully handled internally by the Linear class constructor
     }

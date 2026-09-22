@@ -1,17 +1,13 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.hardware.Gamepad;
-import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.CRServo;
 
-/**
- * Intake Module: Controls dual-servo intake wheels.
- * Handles running the intake via bumpers and triggers with stop-on-release behavior.
- */
 public class Intake {
-    private final Servo leftIntake;
-    private final Servo rightIntake;
+    private final CRServo leftIntake;
+    private final CRServo rightIntake;
 
-    public Intake(Servo leftIntake, Servo rightIntake) {
+    public Intake(CRServo leftIntake, CRServo rightIntake) {
         this.leftIntake = leftIntake;
         this.rightIntake = rightIntake;
     }
@@ -19,18 +15,18 @@ public class Intake {
     public void update(Gamepad gamepad) {
         // Intake when Right Trigger is held
         if (gamepad.right_trigger > 0.1) {
-            leftIntake.setPosition(1.0);
-            rightIntake.setPosition(0.0); // Mirrored rotation (0.0 to 1.0 bounds)
+            leftIntake.setPower(1.0);
+            rightIntake.setPower(-1.0); // Mirrored rotation (0.0 to 1.0 bounds)
         } 
         // Outtake when Left Trigger is held
         else if (gamepad.left_trigger > 0.1) {
-            leftIntake.setPosition(0.0);
-            rightIntake.setPosition(1.0);
+            leftIntake.setPower(-1.0);
+            rightIntake.setPower(1.0);
         } 
         // Stop: When released, continuous rotation servos return to stop (0.5)
         else {
-            leftIntake.setPosition(0.5);
-            rightIntake.setPosition(0.5);
+            leftIntake.setPower(0.0);
+            rightIntake.setPower(0.0);
         }
     }
 }
