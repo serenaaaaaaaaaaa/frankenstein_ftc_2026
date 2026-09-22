@@ -15,7 +15,7 @@ public class Linear {
     // - Resolution: ~18.14 ticks per mm
     // - Stroke Length: 203mm max travel -> 203mm * 18.14 ticks/mm = ~3682 ticks
     private static final int MIN_POSITION = 0;
-    private static final int MAX_POSITION = 3680;
+    private static final int MAX_POSITION = 3500;
     private static final double SLIDE_POWER = 1.0; // Linear actuators require full power for heavy thrust loads
 
     private int targetPosition = 0;
