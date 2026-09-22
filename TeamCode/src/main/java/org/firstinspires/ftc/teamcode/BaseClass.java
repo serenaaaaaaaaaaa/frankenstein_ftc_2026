@@ -4,6 +4,7 @@ import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import java.util.List;
@@ -24,9 +25,14 @@ public class BaseClass extends LinearOpMode {
     protected DcMotor leftSlide = null;
     protected DcMotor rightSlide = null;
 
+    // Intake Motors
+    protected Servo leftIntake = null;
+    protected Servo rightIntake = null;
+
     // Component Instances
     private Drive driveModule;
     private Linear linearModule;
+    private Intake intakeModule;
 
     // Global Variables
     public ElapsedTime matchTime = new ElapsedTime();
@@ -39,6 +45,7 @@ public class BaseClass extends LinearOpMode {
         // 2. Initialize the system modules
         driveModule = new Drive(frontLeftMotor, backLeftMotor, frontRightMotor, backRightMotor);
         linearModule = new Linear(leftSlide, rightSlide);
+        intakeModule = new Intake(leftIntake, rightIntake);
 
         telemetry.addData("Status", "Initialized. Ready to start.");
         telemetry.update();
@@ -50,7 +57,8 @@ public class BaseClass extends LinearOpMode {
         while (opModeIsActive()) {
             // Update components with gamepad inputs
             driveModule.update(gamepad1); // Left stick drives, bumpers scale speed
-            linearModule.update(gamepad1); // Left stick Y controls manual lift, D-pad for presets
+            linearModule.update(gamepad1);
+            intakeModule.update(gamepad1);
 
             // Display status and telemetry profiles
             telemetry.addData("Status", "Running");
@@ -91,6 +99,9 @@ public class BaseClass extends LinearOpMode {
         // Slide Hardware Mapping
         leftSlide = hardwareMap.get(DcMotor.class, "leftSlide");
         rightSlide = hardwareMap.get(DcMotor.class, "rightSlide");
+
+        leftIntake = hardwareMap.get(Servo.class, "leftIntake");
+        rightIntake = hardwareMap.get(Servo.class, "rightIntake");
         
         // Encoders initialization is fully handled internally by the Linear class constructor
     }
