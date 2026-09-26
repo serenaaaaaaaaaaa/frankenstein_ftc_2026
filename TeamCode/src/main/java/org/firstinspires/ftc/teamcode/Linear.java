@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.Range;
 
@@ -16,7 +15,7 @@ public class Linear {
     // - Stroke Length: 203mm max travel -> 203mm * 18.14 ticks/mm = ~3682 ticks
     private static final int MIN_POSITION = 0;
     private static final int MAX_POSITION = 3500;
-    private static final double SLIDE_POWER = 1.0; // Linear actuators require full power for heavy thrust loads
+    private static final double SLIDE_POWER = 0.5; // Linear actuators require full power for heavy thrust loads
 
     private int targetPosition = 0;
     private boolean lastX = false;
@@ -39,10 +38,13 @@ public class Linear {
 
         this.leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         this.rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        //this.leftSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        //this.rightSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
     }
 
     public void update(Gamepad gamepad) {
-        // Toggle logic for X button (rising-edge detection)
         if (gamepad.x && !lastX) {
             isUp = !isUp;
             targetPosition = isUp ? MAX_POSITION : MIN_POSITION;
@@ -56,10 +58,19 @@ public class Linear {
         leftSlide.setTargetPosition(targetPosition);
         rightSlide.setTargetPosition(targetPosition);
 
-        // Maintain constant holding power
         leftSlide.setPower(SLIDE_POWER);
         rightSlide.setPower(SLIDE_POWER);
 
+        // Maintain constant holding power
+
+        //if (targetPosition == leftSlide.getCurrentPosition() && targetPosition == rightSlide.getCurrentPosition()) {
+        //    leftSlide.setPower(0.0);
+        //    rightSlide.setPower(0.0);
+        //}
+        //else {
+            //leftSlide.setPower(SLIDE_POWER);
+            //rightSlide.setPower(SLIDE_POWER);
+        //}
     }
 
     public int getTargetPosition() {
@@ -74,4 +85,11 @@ public class Linear {
         return rightSlide.getCurrentPosition();
     }
 
+    public int getLeftPower(){
+        return (int) leftSlide.getPower();
+    }
+
+    public int getRightPower(){
+        return (int) rightSlide.getPower();
+    }
 }

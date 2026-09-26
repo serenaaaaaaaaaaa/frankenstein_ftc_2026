@@ -28,6 +28,7 @@ public class BaseClass extends LinearOpMode {
     // Intake Motors
     protected CRServo leftIntake = null;
     protected CRServo rightIntake = null;
+    protected DcMotor centreIntake = null;
 
     // Component Instances
     private Drive driveModule;
@@ -45,7 +46,7 @@ public class BaseClass extends LinearOpMode {
         // 2. Initialize the system modules
         driveModule = new Drive(frontLeftMotor, backLeftMotor, frontRightMotor, backRightMotor);
         linearModule = new Linear(leftSlide, rightSlide);
-        intakeModule = new Intake(leftIntake, rightIntake);
+        intakeModule = new Intake(leftIntake, rightIntake, centreIntake);
 
         telemetry.addData("Status", "Initialized. Ready to start.");
         telemetry.update();
@@ -66,6 +67,8 @@ public class BaseClass extends LinearOpMode {
             telemetry.addData("Slide Target Position", linearModule.getTargetPosition());
             telemetry.addData("Slide Real Pos", "L: %d | R: %d", 
                     linearModule.getLeftCurrentPosition(), linearModule.getRightCurrentPosition());
+            telemetry.addData("Slide Power", "L: %d | R: %d",
+                    linearModule.getLeftPower(), linearModule.getRightPower());
             telemetry.update();
         }
 
@@ -102,6 +105,7 @@ public class BaseClass extends LinearOpMode {
 
         leftIntake = hardwareMap.get(CRServo.class, "leftIntake");
         rightIntake = hardwareMap.get(CRServo.class, "rightIntake");
+        centreIntake = hardwareMap.get(DcMotor.class, "centreIntake");
         
         // Encoders initialization is fully handled internally by the Linear class constructor
     }
