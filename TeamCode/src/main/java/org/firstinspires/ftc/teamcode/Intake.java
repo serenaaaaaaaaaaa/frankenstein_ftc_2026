@@ -20,13 +20,13 @@ public class Intake {
         if (gamepad.right_trigger > 0.1) {
             leftIntake.setPower(1.0);
             rightIntake.setPower(-1.0); // Mirrored rotation (0.0 to 1.0 bounds)
-            centreIntake.setPower(1.0);
+            centreIntake.setPower(-1.0);
         }
         // Outtake when Left Trigger is held
         else if (gamepad.left_trigger > 0.1) {
             leftIntake.setPower(-1.0);
             rightIntake.setPower(1.0);
-            centreIntake.setPower(-1.0);
+            centreIntake.setPower(1.0);
         }
         // Stop: When released, continuous rotation servos return to stop (0.5)
         else {

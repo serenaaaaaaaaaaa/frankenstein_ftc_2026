@@ -58,17 +58,17 @@ public class BaseClass extends LinearOpMode {
         while (opModeIsActive()) {
             // Update components with gamepad inputs
             driveModule.update(gamepad1); // Left stick drives, bumpers scale speed
-            linearModule.update(gamepad1);
+            //linearModule.update(gamepad1);
             intakeModule.update(gamepad1);
 
             // Display status and telemetry profiles
             telemetry.addData("Status", "Running");
             telemetry.addData("Drive Speed Modifier", "%.1f", driveModule.speedMultiplier);
-            telemetry.addData("Slide Target Position", linearModule.getTargetPosition());
-            telemetry.addData("Slide Real Pos", "L: %d | R: %d", 
-                    linearModule.getLeftCurrentPosition(), linearModule.getRightCurrentPosition());
-            telemetry.addData("Slide Power", "L: %d | R: %d",
-                    linearModule.getLeftPower(), linearModule.getRightPower());
+            //telemetry.addData("Slide Target Position", linearModule.getTargetPosition());
+           // telemetry.addData("Slide Real Pos", "L: %d | R: %d",
+            //        linearModule.getLeftCurrentPosition(), linearModule.getRightCurrentPosition());
+            //telemetry.addData("Slide Power", "L: %d | R: %d",
+            //        linearModule.getLeftPower(), linearModule.getRightPower());
             telemetry.update();
         }
 
