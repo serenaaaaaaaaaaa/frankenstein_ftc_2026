@@ -30,10 +30,15 @@ public class BaseClass extends LinearOpMode {
     protected CRServo rightIntake = null;
     protected DcMotor centreIntake = null;
 
+    // Outtake Motors
+    protected CRServo windmill = null;
+    protected DcMotor flywheel = null;
+
     // Component Instances
     private Drive driveModule;
     private Linear linearModule;
     private Intake intakeModule;
+    private Outtake outtakeModule;
 
     // Global Variables
     public ElapsedTime matchTime = new ElapsedTime();
@@ -47,6 +52,7 @@ public class BaseClass extends LinearOpMode {
         driveModule = new Drive(frontLeftMotor, backLeftMotor, frontRightMotor, backRightMotor);
         linearModule = new Linear(leftSlide, rightSlide);
         intakeModule = new Intake(leftIntake, rightIntake, centreIntake);
+        outtakeModule = new Outtake(windmill, flywheel);
 
         telemetry.addData("Status", "Initialized. Ready to start.");
         telemetry.update();
@@ -60,6 +66,7 @@ public class BaseClass extends LinearOpMode {
             driveModule.update(gamepad1); // Left stick drives, bumpers scale speed
             linearModule.update(gamepad1);
             intakeModule.update(gamepad1);
+            outtakeModule.update(gamepad1);
 
             // Display status and telemetry profiles
             telemetry.addData("Status", "Running");
@@ -106,6 +113,9 @@ public class BaseClass extends LinearOpMode {
         leftIntake = hardwareMap.get(CRServo.class, "leftIntake");
         rightIntake = hardwareMap.get(CRServo.class, "rightIntake");
         centreIntake = hardwareMap.get(DcMotor.class, "centreIntake");
+
+        windmill = hardwareMap.get(CRServo.class, "windmill");
+        flywheel = hardwareMap.get(DcMotor.class, "flywheel");
         
         // Encoders initialization is fully handled internally by the Linear class constructor
     }
