@@ -18,15 +18,15 @@ public class Intake {
     public void update(Gamepad gamepad) {
         // Intake when Right Trigger is held
         if (gamepad.right_trigger > 0.1) {
-            leftIntake.setPower(1.0);
-            rightIntake.setPower(-1.0); // Mirrored rotation (0.0 to 1.0 bounds)
-            centreIntake.setPower(-1.0);
+            leftIntake.setPower(0.9);
+            rightIntake.setPower(-0.9); // Mirrored rotation (0.0 to 1.0 bounds)
+            centreIntake.setPower(0.9);
         }
         // Outtake when Left Trigger is held
         else if (gamepad.left_trigger > 0.1) {
-            leftIntake.setPower(-1.0);
-            rightIntake.setPower(1.0);
-            centreIntake.setPower(1.0);
+            leftIntake.setPower(-0.9);
+            rightIntake.setPower(0.9);
+            centreIntake.setPower(0.9);
         }
         // Stop: When released, continuous rotation servos return to stop (0.5)
         else {
