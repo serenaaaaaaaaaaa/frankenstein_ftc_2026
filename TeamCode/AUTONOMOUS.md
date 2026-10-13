@@ -1,30 +1,47 @@
-# BIOBUZZ autonomous routes
+# BIOBUZZ autonomous strategy
 
-Choose the OpMode matching **your alliance and starting corner** on the Driver Station. Enable its **30-second AUTO timer**. The four routines use only the four drive motors, with the existing configuration names `frontLeftMotor`, `backLeftMotor`, `frontRightMotor`, and `backRightMotor`. They do not move the lift or intake.
+The robot now has four selectable BIOBUZZ OpModes. They use the drivetrain that exists today and recognize the existing three-part intake (`leftIntake`, `rightIntake`, and `centreIntake`). The intake stays stopped because there is no confirmed launcher or aiming setup yet.
 
-| Driver Station OpMode | Start with back touching | Route | Intended AUTO result |
+| Driver Station OpMode | Start | Current route | Current goal |
 | --- | --- | --- | --- |
-| BIOBUZZ Red - Loading | Top wall, immediately beside the red top-left LOADING ZONE | Forward, then strafe right into red zone | LEAVE + PARK |
-| BIOBUZZ Blue - Loading | Bottom wall, immediately beside the blue bottom-right LOADING ZONE | Forward, then strafe right into blue zone | LEAVE + PARK |
-| BIOBUZZ Red - Garden | Bottom wall, toward the red bottom-left GARDEN | Forward | LEAVE |
-| BIOBUZZ Blue - Garden | Top wall, toward the blue top-right GARDEN | Forward | LEAVE |
+| `BIOBUZZ Red - Loading` | Red wall beside the red LOADING ZONE | Forward, scoring placeholder, strafe right | LEAVE + PARK |
+| `BIOBUZZ Blue - Loading` | Blue wall beside the blue LOADING ZONE | Forward, scoring placeholder, strafe right | LEAVE + PARK |
+| `BIOBUZZ Red - Garden` | Red garden-side wall | Forward, scoring placeholder, hold | LEAVE |
+| `BIOBUZZ Blue - Garden` | Blue garden-side wall | Forward, scoring placeholder, hold | LEAVE |
 
-In every case, face the front of the robot toward the **center of the field**. Keep the entire robot outside the LOADING ZONE at the start. For the two loading routes, stage immediately beside the zone so it is on the robot's **right**; the path assumes the robot has room to move forward and right without hitting a wall, HIVE, partner, or another scoring element. Do not use these routes from a different starting tile. The garden routes deliberately stop after LEAVE because the alliance LOADING ZONE is at the far end of the field; reaching it without position sensing and a surveyed route would be unreliable.
+For every route, the robot starts with its back touching the perimeter and its front facing the field center. For a loading route, stage immediately beside your alliance's LOADING ZONE, fully outside it, with the zone on the robot's right. Keep the route clear of the HIVE, alliance partner, and loose game elements.
 
-## Before any motion
+## What works now
 
-Edit `BioBuzzAutoBase.java`:
+Until encoder calibration is available, the robot uses a conservative timed fallback:
 
-1. Measure and set `FORWARD_TICKS_PER_INCH`. Drive forward a measured distance on a safe test surface, and divide the average absolute encoder change of the four wheels by inches traveled.
-2. For a loading route, measure and set `STRAFE_TICKS_PER_INCH` separately. Mecanum sideways travel generally needs a different scale.
-3. Start with the robot on blocks and verify all four wheels move in the intended direction. The code assumes the **right motors are reversed**. Confirm encoder counts advance toward their commanded targets.
-4. Put the robot in its exact intended field starting position and tune `LEAVE_DISTANCE_INCHES` and `LOADING_ZONE_STRAFE_INCHES` at low power. The included 18-inch forward and 8-inch right commands are **initial estimates**, not field-validated distances. The robot's width, length, starting offset, wheel size, and wheel slip determine whether PARK is actually achieved. The 8-inch sideways estimate leaves a nominal 3-inch margin from the side wall when the robot starts directly beside the 11-inch-wide zone; verify actual clearance before increasing it.
-5. Test each route on the real field, then verify it finishes away from the wall (LEAVE) and at least partly inside the matching LOADING ZONE (PARK where applicable). Leave enough clearance for the alliance partner and HIVE.
+- drive forward at 30% power for 1.00 second to attempt LEAVE;
+- for loading starts, strafe right at 30% power for 0.55 second to attempt PARK;
+- stop every drive and intake output before the OpMode exits;
+- abort powered motion at STOP or before the 30-second AUTO period ends.
 
-With an unset encoder scale, the selected routine displays `NOT SET` during INIT and **does not drive** after START. It uses no gamepad input during AUTO. A wheel that fails to make progress, a step taking over six seconds, STOP, or the 29-second cutoff ends motion. Power is set to zero even if the OpMode exits early.
+These times are filler measurements, so test with wheels raised first and then on a marked practice field. Tune `TIMED_LEAVE_SECONDS` and `TIMED_PARK_STRAFE_SECONDS` in `BioBuzzAutoBase.java`. Confirm the robot clears the perimeter wall for LEAVE and finishes partly inside its own LOADING ZONE for PARK.
 
-## Game basis and limits
+## Encoder upgrade already wired in
 
-The supplied *BIOBUZZ Competition Manual TU01* defines a 30-second AUTO period (10.4), awards LEAVE when the robot no longer touches the perimeter wall and PARK when it is partly in its own LOADING ZONE (10.5.4), and scores 3 and 5 points respectively (Table 10-2). Figure 9-4 shows the red loading zone in the top-left and blue loading zone in the bottom-right. The garden-side routes stay on their own alliance half, consistent with G402. G304 requires the robot to start touching a perimeter wall, outside the LOADING ZONE, and contacting exactly four POLLEN preloads. G403 requires the robot to be motionless during the AUTO-to-TELEOP transition.
+Enter measured `FORWARD_TICKS_PER_INCH` and `STRAFE_TICKS_PER_INCH` in `BioBuzzAutoBase.java`. Once both values are above zero, all four routines automatically switch from timed motion to relative encoder targets with wheel-stall detection.
 
-This version does not attempt HIVE TIPS or POLLEN scoring. The synced `Intake.java` has no actions, and no launcher geometry, servo positions, aiming sensor, or tested intake mechanism was supplied. The routes require physical testing before competition use; encoder targets alone do not detect another robot or field obstacle.
+To measure a scale, record all four drive encoder positions, move a measured distance, calculate each absolute encoder change, average the four changes, and divide by inches moved. Measure forward and sideways separately.
+
+## Scoring filler
+
+`BioBuzzMechanisms.java` contains the complete placeholder sequence for preload HIVE scoring:
+
+1. verify the intake and future launcher are configured;
+2. spin up the launcher;
+3. run the existing intake in its TeleOp outtake direction to feed four preload POLLEN;
+4. stop every mechanism;
+5. continue to PARK even when scoring is unavailable.
+
+It is disabled with `ENABLE_PRELOAD_SCORING = false`. The launcher name, direction/power, spin-up time, feed time, physical launch position, and aiming method are unknown. While disabled, telemetry reports `HIVE scoring: SKIPPED` and the intake never moves. This gives us a safe place to add the real mechanism later without changing the route structure.
+
+Do not enable the filler until the launcher exists and every placeholder constant is tested on the robot. The current code does not claim a HIVE TIP or detect field obstacles.
+
+## Game basis
+
+The strategy uses the official BIOBUZZ Competition Manual TU04, current on 13 October 2026. AUTO lasts 30 seconds. LEAVE and AUTO PARK are assessed at the end of AUTO; PARK requires the robot to be at least partly in its alliance LOADING ZONE. The strategy prioritizes these repeatable objectives while HIVE scoring hardware is incomplete. Check the official manual and Team Updates again before each event because FIRST publishes revisions during the season.
