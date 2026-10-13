@@ -44,7 +44,7 @@ public class Linear {
 
     }
 
-    public void update(Gamepad gamepad) {
+    /*public void update(Gamepad gamepad) {
         if (gamepad.x && !lastX) {
             isUp = !isUp;
             targetPosition = isUp ? MAX_POSITION : MIN_POSITION;
@@ -91,5 +91,5 @@ public class Linear {
 
     public int getRightPower(){
         return (int) rightSlide.getPower();
-    }
+    }*/
 }
