@@ -22,8 +22,8 @@ public class BaseClass extends LinearOpMode {
     protected DcMotor frontRightMotor = null;
 
     // Linear Slide Motors
-    protected DcMotor leftSlide = null;
-    protected DcMotor rightSlide = null;
+    //protected DcMotor leftSlide = null;
+    //protected DcMotor rightSlide = null;
 
     // Intake Motors
     protected CRServo leftIntake = null;
@@ -36,7 +36,7 @@ public class BaseClass extends LinearOpMode {
 
     // Component Instances
     private Drive driveModule;
-    private Linear linearModule;
+    //private Linear linearModule;
     private Intake intakeModule;
     private Outtake outtakeModule;
 
@@ -50,7 +50,7 @@ public class BaseClass extends LinearOpMode {
 
         // 2. Initialize the system modules
         driveModule = new Drive(frontLeftMotor, backLeftMotor, frontRightMotor, backRightMotor);
-        linearModule = new Linear(leftSlide, rightSlide);
+        //linearModule = new Linear(leftSlide, rightSlide);
         intakeModule = new Intake(leftIntake, rightIntake, centreIntake);
         outtakeModule = new Outtake(windmill, flywheel);
 
@@ -107,8 +107,8 @@ public class BaseClass extends LinearOpMode {
         frontRightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         // Slide Hardware Mapping
-        leftSlide = hardwareMap.get(DcMotor.class, "leftSlide");
-        rightSlide = hardwareMap.get(DcMotor.class, "rightSlide");
+        //leftSlide = hardwareMap.get(DcMotor.class, "leftSlide");
+        //rightSlide = hardwareMap.get(DcMotor.class, "rightSlide");
 
         leftIntake = hardwareMap.get(CRServo.class, "leftIntake");
         rightIntake = hardwareMap.get(CRServo.class, "rightIntake");
