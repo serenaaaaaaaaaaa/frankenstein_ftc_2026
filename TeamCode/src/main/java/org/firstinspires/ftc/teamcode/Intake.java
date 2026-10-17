@@ -22,7 +22,7 @@ public class Intake {
             rightIntake.setPower(-0.9); // Mirrored rotation (0.0 to 1.0 bounds)
             centreIntake.setPower(-0.9);
         }
-        // Outtake when Left Trigger is held
+        // Reverse Intake when Left Trigger is held
         else if (gamepad.left_trigger > 0.1) {
             leftIntake.setPower(-0.9);
             rightIntake.setPower(0.9);
