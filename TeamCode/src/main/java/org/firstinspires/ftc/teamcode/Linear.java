@@ -92,4 +92,4 @@ public class Linear {
     public int getRightPower(){
         return (int) rightSlide.getPower();
     }*/
-}
+//}
