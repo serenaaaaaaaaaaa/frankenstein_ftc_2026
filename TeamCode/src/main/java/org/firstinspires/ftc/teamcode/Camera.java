@@ -47,10 +47,7 @@ public class Drive {
      * Supports manual driving and automatic AprilTag aiming.
      */
     public void update(
-            Gamepad gamepad,
-            boolean autoAim,
-            boolean targetVisible,
-            double targetBearing
+            Gamepad gamepad
     ) {
 
         // Speed adjustment

@@ -30,6 +30,9 @@ public class BaseClass extends LinearOpMode {
     protected CRServo rightIntake = null;
     protected DcMotor centreIntake = null;
 
+    //Travel Motors
+    protected DcMotor travelmotor = null;
+
     // Outtake Motors
     protected CRServo windmill = null;
     protected DcMotor flywheel = null;
@@ -38,8 +41,9 @@ public class BaseClass extends LinearOpMode {
     private Drive driveModule;
     //private Linear linearModule;
     private Intake intakeModule;
+    private Travel travelModule;
     private Outtake outtakeModule;
-    private AprilTagReader aprilTagReader;
+    //private AprilTagReader aprilTagReader;
 
     // Global Variables
     public ElapsedTime matchTime = new ElapsedTime();
@@ -53,6 +57,7 @@ public class BaseClass extends LinearOpMode {
         driveModule = new Drive(frontLeftMotor, backLeftMotor, frontRightMotor, backRightMotor);
         //linearModule = new Linear(leftSlide, rightSlide);
         intakeModule = new Intake(leftIntake, rightIntake, centreIntake);
+        travelModule = new Travel(travelmotor);
         outtakeModule = new Outtake(windmill, flywheel);
 
         telemetry.addData("Status", "Initialized. Ready to start.");
@@ -67,6 +72,7 @@ public class BaseClass extends LinearOpMode {
             driveModule.update(gamepad1); // Left stick drives, bumpers scale speed
             //linearModule.update(gamepad1);
             intakeModule.update(gamepad1);
+            travelModule.update(gamepad1);
             outtakeModule.update(gamepad1);
 
             // Display status and telemetry profiles
@@ -115,10 +121,12 @@ public class BaseClass extends LinearOpMode {
         rightIntake = hardwareMap.get(CRServo.class, "rightIntake");
         centreIntake = hardwareMap.get(DcMotor.class, "centreIntake");
 
+        travelmotor = hardwareMap.get(DcMotor.class, "travelmotor");
+
         windmill = hardwareMap.get(CRServo.class, "windmill");
         flywheel = hardwareMap.get(DcMotor.class, "flywheel");
 
-        aprilTagReader = new AprilTagReader(hardwareMap);
+        //aprilTagReader = new AprilTagReader(hardwareMap);
         
         // Encoders initialization is fully handled internally by the Linear class constructor
     }
