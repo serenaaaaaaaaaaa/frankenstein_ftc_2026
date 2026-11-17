@@ -34,7 +34,6 @@ public class BaseClass extends LinearOpMode {
     protected DcMotor travelmotor = null;
 
     // Outtake Motors
-    protected CRServo windmill = null;
     protected DcMotor flywheel = null;
 
     // Component Instances
@@ -58,7 +57,7 @@ public class BaseClass extends LinearOpMode {
         //linearModule = new Linear(leftSlide, rightSlide);
         intakeModule = new Intake(leftIntake, rightIntake, centreIntake);
         travelModule = new Travel(travelmotor);
-        outtakeModule = new Outtake(windmill, flywheel);
+        outtakeModule = new Outtake(flywheel);
 
         telemetry.addData("Status", "Initialized. Ready to start.");
         telemetry.update();
@@ -123,7 +122,6 @@ public class BaseClass extends LinearOpMode {
 
         travelmotor = hardwareMap.get(DcMotor.class, "travelmotor");
 
-        windmill = hardwareMap.get(CRServo.class, "windmill");
         flywheel = hardwareMap.get(DcMotor.class, "flywheel");
 
         //aprilTagReader = new AprilTagReader(hardwareMap);

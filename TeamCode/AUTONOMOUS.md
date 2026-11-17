@@ -1,6 +1,6 @@
 # BIOBUZZ autonomous strategy
 
-The robot has four selectable BIOBUZZ OpModes. They use the drivetrain and recognize the current intake, travel motor, windmill, flywheel, and optional webcam. The intake and travel motor stay stopped during the current route. HIVE scoring is enabled using the tested windmill/flywheel directions.
+The robot has four selectable BIOBUZZ OpModes. They use the drivetrain and recognize the current intake, travel motor, flywheel, and optional webcam. The intake and travel motor stay stopped during the current route. HIVE scoring uses the flywheel only; there is no windmill feeder on this robot.
 
 | Driver Station OpMode | Start | Current route | Current goal |
 | --- | --- | --- | --- |
@@ -30,16 +30,16 @@ To measure a scale, record all four drive encoder positions, move a measured dis
 
 ## Scoring filler
 
-`BioBuzzMechanisms.java` contains the complete sequence for preload HIVE scoring using the current `windmill` and `flywheel` configuration:
+`BioBuzzMechanisms.java` contains the current flywheel-only preload HIVE scoring sequence:
 
-1. verify the windmill, flywheel, and optional travel positioning are configured;
+1. verify the flywheel and optional travel positioning are configured;
 2. optionally move the travel mechanism to its shooting position;
 3. spin up the flywheel at the tested TeleOp direction;
-4. run the windmill to feed four preload POLLEN;
+4. keep the flywheel running through a 2.5-second launch window;
 5. stop every mechanism;
 6. continue to PARK even when scoring is unavailable.
 
-It is enabled with `ENABLE_HIVE_SCORING = true`. The code uses the existing `-0.9` flywheel/windmill direction, spins up for 1.2 seconds, and feeds for 2.5 seconds. The AUTO start and one-second forward movement must leave the outtake aimed safely toward the HIVE. Travel positioning and AprilTag aiming remain disabled.
+It is enabled with `ENABLE_HIVE_SCORING = true`. The code uses the existing `-0.9` flywheel direction, spins up for 1.2 seconds, and runs for another 2.5 seconds. The AUTO start and one-second forward movement must leave the launcher aimed safely toward the HIVE. Travel positioning and AprilTag aiming remain disabled. Confirm that preloaded POLLEN reaches the flywheel without a powered feeder before relying on this shot in competition.
 
 Test the shot with the drivetrain raised and no POLLEN first, then test one POLLEN from a protected position. The code does not confirm a HIVE TIP or detect field obstacles.
 

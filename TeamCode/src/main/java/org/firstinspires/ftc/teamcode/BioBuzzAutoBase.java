@@ -67,8 +67,7 @@ public abstract class BioBuzzAutoBase extends LinearOpMode {
 
             if (!moveForwardForLeave()) return;
 
-            // Current hardware has an intake but no defined launcher. This hook reports SKIPPED
-            // and immediately continues, so reliable LEAVE/PARK points remain the priority.
+            // Run the flywheel-only preload launch window before completing the route.
             mechanisms.scoreFourPreloads(this);
             if (!opModeIsActive()) return;
 

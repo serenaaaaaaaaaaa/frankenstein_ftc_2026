@@ -6,14 +6,13 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 /** Autonomous adapter for the mechanisms currently configured in TeleOp. */
 final class BioBuzzMechanisms {
-    // The windmill and flywheel directions match the tested Outtake.java controls.
+    // The flywheel direction matches the tested Outtake.java control.
     private static final double FLYWHEEL_POWER = -0.9;
-    private static final double WINDMILL_POWER = -0.9;
 
     // Enabled for robot testing. The AUTO start must place the outtake toward the HIVE.
     private static final boolean ENABLE_HIVE_SCORING = true;
     private static final long FLYWHEEL_SPINUP_MS = 1200; // Initial filler value; tune on robot.
-    private static final long FOUR_POLLEN_FEED_MS = 2500; // Initial filler value; tune on robot.
+    private static final long LAUNCH_WINDOW_MS = 2500; // Initial filler value; tune on robot.
 
     // Travel has no encoder/limit logic yet. It must not move autonomously until timed safely.
     private static final boolean ENABLE_TRAVEL_POSITIONING = false;
@@ -24,7 +23,6 @@ final class BioBuzzMechanisms {
     private final CRServo rightIntake;
     private final DcMotor centreIntake;
     private final DcMotor travelMotor;
-    private final CRServo windmill;
     private final DcMotor flywheel;
 
     BioBuzzMechanisms(HardwareMap hardwareMap) {
@@ -32,7 +30,6 @@ final class BioBuzzMechanisms {
         rightIntake = hardwareMap.tryGet(CRServo.class, "rightIntake");
         centreIntake = hardwareMap.tryGet(DcMotor.class, "centreIntake");
         travelMotor = hardwareMap.tryGet(DcMotor.class, "travelmotor");
-        windmill = hardwareMap.tryGet(CRServo.class, "windmill");
         flywheel = hardwareMap.tryGet(DcMotor.class, "flywheel");
         stopAll();
     }
@@ -42,17 +39,17 @@ final class BioBuzzMechanisms {
     }
 
     boolean outtakeAvailable() {
-        return windmill != null && flywheel != null;
+        return flywheel != null;
     }
 
     boolean preloadScoringReady() {
         boolean travelReady = !ENABLE_TRAVEL_POSITIONING
                 || (travelMotor != null && TRAVEL_TO_SHOOT_MS > 0);
         return ENABLE_HIVE_SCORING && outtakeAvailable() && travelReady
-                && FLYWHEEL_SPINUP_MS > 0 && FOUR_POLLEN_FEED_MS > 0;
+                && FLYWHEEL_SPINUP_MS > 0 && LAUNCH_WINDOW_MS > 0;
     }
 
-    /** Spins the tested flywheel, then feeds four preloads with the windmill. */
+    /** Spins the flywheel through a timed preload-launch window. */
     boolean scoreFourPreloads(BioBuzzAutoBase auto) throws InterruptedException {
         if (!preloadScoringReady()) {
             auto.reportMechanism("HIVE scoring", outtakeAvailable()
@@ -76,10 +73,9 @@ final class BioBuzzMechanisms {
             return false;
         }
 
-        windmill.setPower(WINDMILL_POWER);
-        boolean completed = auto.waitWhileActive(FOUR_POLLEN_FEED_MS);
+        boolean completed = auto.waitWhileActive(LAUNCH_WINDOW_MS);
         stopAll();
-        auto.reportMechanism("HIVE scoring", completed ? "four-POLLEN feed complete" : "stopped early");
+        auto.reportMechanism("HIVE scoring", completed ? "flywheel launch window complete" : "stopped early");
         return completed;
     }
 
@@ -88,7 +84,6 @@ final class BioBuzzMechanisms {
         if (rightIntake != null) rightIntake.setPower(0);
         if (centreIntake != null) centreIntake.setPower(0);
         if (travelMotor != null) travelMotor.setPower(0);
-        if (windmill != null) windmill.setPower(0);
         if (flywheel != null) flywheel.setPower(0);
     }
 }
