@@ -119,6 +119,8 @@ public class BaseClass extends LinearOpMode {
         flywheel = hardwareMap.get(DcMotor.class, "flywheel");
 
         aprilTagReader = new AprilTagReader(hardwareMap);
+
+        
         
         // Encoders initialization is fully handled internally by the Linear class constructor
     }
