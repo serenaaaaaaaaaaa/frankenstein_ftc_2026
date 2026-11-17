@@ -1,6 +1,6 @@
 # BIOBUZZ autonomous strategy
 
-The robot now has four selectable BIOBUZZ OpModes. They use the drivetrain that exists today and recognize the existing three-part intake (`leftIntake`, `rightIntake`, and `centreIntake`). The intake stays stopped because there is no confirmed launcher or aiming setup yet.
+The robot has four selectable BIOBUZZ OpModes. They use the drivetrain and recognize the current intake, travel motor, windmill, flywheel, and optional webcam. The intake and travel motor stay stopped during the current route. The tested windmill/flywheel directions are wired into the scoring phase, but scoring remains disabled until the robot has a field-tested HIVE route and timing.
 
 | Driver Station OpMode | Start | Current route | Current goal |
 | --- | --- | --- | --- |
@@ -30,15 +30,16 @@ To measure a scale, record all four drive encoder positions, move a measured dis
 
 ## Scoring filler
 
-`BioBuzzMechanisms.java` contains the complete placeholder sequence for preload HIVE scoring:
+`BioBuzzMechanisms.java` contains the complete sequence for preload HIVE scoring using the current `windmill` and `flywheel` configuration:
 
-1. verify the intake and future launcher are configured;
-2. spin up the launcher;
-3. run the existing intake in its TeleOp outtake direction to feed four preload POLLEN;
-4. stop every mechanism;
-5. continue to PARK even when scoring is unavailable.
+1. verify the windmill, flywheel, and optional travel positioning are configured;
+2. optionally move the travel mechanism to its shooting position;
+3. spin up the flywheel at the tested TeleOp direction;
+4. run the windmill to feed four preload POLLEN;
+5. stop every mechanism;
+6. continue to PARK even when scoring is unavailable.
 
-It is disabled with `ENABLE_PRELOAD_SCORING = false`. The launcher name, direction/power, spin-up time, feed time, physical launch position, and aiming method are unknown. While disabled, telemetry reports `HIVE scoring: SKIPPED` and the intake never moves. This gives us a safe place to add the real mechanism later without changing the route structure.
+It is disabled with `ENABLE_HIVE_SCORING = false`. The code uses the existing `-0.9` flywheel/windmill direction and includes initial filler values of 1.2 seconds spin-up and 2.5 seconds feed. The physical launch position, travel duration, shot timing, and AprilTag target are still unknown. While disabled, telemetry reports `HIVE scoring: SKIPPED` and no scoring mechanism moves.
 
 Do not enable the filler until the launcher exists and every placeholder constant is tested on the robot. The current code does not claim a HIVE TIP or detect field obstacles.
 
