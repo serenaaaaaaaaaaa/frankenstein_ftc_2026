@@ -30,16 +30,15 @@ To measure a scale, record all four drive encoder positions, move a measured dis
 
 ## Scoring filler
 
-`BioBuzzMechanisms.java` contains the current flywheel-only preload HIVE scoring sequence:
+`BioBuzzMechanisms.java` contains the current preload HIVE scoring sequence:
 
-1. verify the flywheel and optional travel positioning are configured;
-2. optionally move the travel mechanism to its shooting position;
-3. spin up the flywheel at the tested TeleOp direction;
-4. keep the flywheel running through a 2.5-second launch window;
-5. stop every mechanism;
-6. continue to PARK even when scoring is unavailable.
+1. verify the flywheel and `travelmotor` feeder are configured;
+2. spin up the flywheel at the tested TeleOp direction;
+3. pulse `travelmotor` once for each of four POLLEN, with flywheel recovery time between shots;
+4. stop every mechanism;
+5. continue to PARK even when scoring is unavailable.
 
-It is enabled with `ENABLE_HIVE_SCORING = true`. The code uses the existing `-0.9` flywheel direction, spins up for 1.2 seconds, and runs for another 2.5 seconds. The AUTO start and one-second forward movement must leave the launcher aimed safely toward the HIVE. Travel positioning and AprilTag aiming remain disabled. Confirm that preloaded POLLEN reaches the flywheel without a powered feeder before relying on this shot in competition.
+It is enabled with `ENABLE_HIVE_SCORING = true`. The code uses the tested `-0.9` direction for both motors, spins up for 1.2 seconds, feeds each POLLEN for 0.35 seconds, and gives the flywheel 0.45 seconds to recover between shots. These are filler timings that must be tuned on the robot. The AUTO start and one-second forward movement must leave the launcher aimed safely toward the HIVE. AprilTag aiming remains disabled.
 
 Test the shot with the drivetrain raised and no POLLEN first, then test one POLLEN from a protected position. The code does not confirm a HIVE TIP or detect field obstacles.
 
