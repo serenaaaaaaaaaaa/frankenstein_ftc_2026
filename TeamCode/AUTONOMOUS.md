@@ -1,47 +1,39 @@
 # BIOBUZZ autonomous strategy
 
-The robot has four selectable BIOBUZZ OpModes. They use the drivetrain and recognize the current intake, travel motor, windmill, flywheel, and optional webcam. The intake and travel motor stay stopped during the current route. The tested windmill/flywheel directions are wired into the scoring phase, but scoring remains disabled until the robot has a field-tested HIVE route and timing.
+The robot has four selectable BIOBUZZ OpModes. They use encoder-controlled mecanum drive, IMU heading correction, optional AprilTag aiming, the flywheel, and the `travelmotor` feeder. The intake stays stopped during AUTO.
 
 | Driver Station OpMode | Start | Current route | Current goal |
 | --- | --- | --- | --- |
-| `BIOBUZZ Red - Loading` | Red wall beside the red LOADING ZONE | Forward, scoring placeholder, strafe right | LEAVE + PARK |
-| `BIOBUZZ Blue - Loading` | Blue wall beside the blue LOADING ZONE | Forward, scoring placeholder, strafe right | LEAVE + PARK |
-| `BIOBUZZ Red - Garden` | Red garden-side wall | Forward, scoring placeholder, hold | LEAVE |
-| `BIOBUZZ Blue - Garden` | Blue garden-side wall | Forward, scoring placeholder, hold | LEAVE |
+| `BIOBUZZ Red - Loading` | Red wall beside the red LOADING ZONE | LEAVE, aim, shoot four, strafe right | SCORE + PARK |
+| `BIOBUZZ Blue - Loading` | Blue wall beside the blue LOADING ZONE | LEAVE, aim, shoot four, strafe right | SCORE + PARK |
+| `BIOBUZZ Red - Garden` | Red garden-side wall | LEAVE, aim, shoot four, hold | SCORE + LEAVE |
+| `BIOBUZZ Blue - Garden` | Blue garden-side wall | LEAVE, aim, shoot four, hold | SCORE + LEAVE |
 
 For every route, the robot starts with its back touching the perimeter and its front facing the field center. For a loading route, stage immediately beside your alliance's LOADING ZONE, fully outside it, with the zone on the robot's right. Keep the route clear of the HIVE, alliance partner, and loose game elements.
 
-## What works now
+## Movement and aiming
 
-Until encoder calibration is available, the robot uses a conservative timed fallback:
+The robot now uses drive encoders with IMU heading correction. The baseline assumes 537.7 encoder ticks per motor revolution and 96 mm mecanum wheels. `FORWARD_CORRECTION` starts at `1.00`, while `STRAFE_CORRECTION` starts at `1.12` to account for mecanum slip.
 
-- drive forward at 30% power for 1.00 second to attempt LEAVE;
-- for loading starts, strafe right at 30% power for 0.55 second to attempt PARK;
-- stop every drive and intake output before the OpMode exits;
-- abort powered motion at STOP or before the 30-second AUTO period ends.
+Validate each correction with a 24-inch floor test. Update it using `old correction * commanded distance / measured distance`. For example, if a commanded 24 inches travels 22 inches, multiply that correction by `24 / 22`.
 
-These times are filler measurements, so test with wheels raised first and then on a marked practice field. Tune `TIMED_LEAVE_SECONDS` and `TIMED_PARK_STRAFE_SECONDS` in `BioBuzzAutoBase.java`. Confirm the robot clears the perimeter wall for LEAVE and finishes partly inside its own LOADING ZONE for PARK.
+The IMU is configured for a REV Hub mounted logo-up with its USB port facing forward. Change the two `RevHubOrientationOnRobot` directions if the Control Hub is mounted differently. LEAVE and PARK correct yaw drift and include wheel-stall detection.
 
-## Encoder upgrade already wired in
-
-Enter measured `FORWARD_TICKS_PER_INCH` and `STRAFE_TICKS_PER_INCH` in `BioBuzzAutoBase.java`. Once both values are above zero, all four routines automatically switch from timed motion to relative encoder targets with wheel-stall detection.
-
-To measure a scale, record all four drive encoder positions, move a measured distance, calculate each absolute encoder change, average the four changes, and divide by inches moved. Measure forward and sideways separately.
+Before shooting, `Webcam 1` centers red HIVE tags 30-37 or blue HIVE tags 38-45 to within 1.5 degrees. If no alliance target is visible, the robot safely returns to its zero-degree starting heading. Tune `CAMERA_TO_LAUNCHER_OFFSET_DEGREES` if the webcam and launcher do not point in exactly the same direction.
 
 ## Scoring filler
 
-`BioBuzzMechanisms.java` contains the complete sequence for preload HIVE scoring using the current `windmill` and `flywheel` configuration:
+`BioBuzzMechanisms.java` contains the current preload HIVE scoring sequence:
 
-1. verify the windmill, flywheel, and optional travel positioning are configured;
-2. optionally move the travel mechanism to its shooting position;
-3. spin up the flywheel at the tested TeleOp direction;
-4. run the windmill to feed four preload POLLEN;
-5. stop every mechanism;
-6. continue to PARK even when scoring is unavailable.
+1. verify the flywheel and `travelmotor` feeder are configured;
+2. spin up the flywheel at the tested TeleOp direction;
+3. pulse `travelmotor` once for each of four POLLEN, with flywheel recovery time between shots;
+4. stop every mechanism;
+5. continue to PARK even when scoring is unavailable.
 
-It is disabled with `ENABLE_HIVE_SCORING = false`. The code uses the existing `-0.9` flywheel/windmill direction and includes initial filler values of 1.2 seconds spin-up and 2.5 seconds feed. The physical launch position, travel duration, shot timing, and AprilTag target are still unknown. While disabled, telemetry reports `HIVE scoring: SKIPPED` and no scoring mechanism moves.
+It is enabled with `ENABLE_HIVE_SCORING = true`. The code uses the tested `-0.9` direction for both motors, spins up for 1.2 seconds, feeds each POLLEN for 0.35 seconds, and gives the flywheel 0.45 seconds to recover between shots. These are filler timings that must be tuned on the robot. The AUTO start and one-second forward movement must leave the launcher aimed safely toward the HIVE. AprilTag aiming remains disabled.
 
-Do not enable the filler until the launcher exists and every placeholder constant is tested on the robot. The current code does not claim a HIVE TIP or detect field obstacles.
+Test the shot with the drivetrain raised and no POLLEN first, then test one POLLEN from a protected position. The code does not confirm a HIVE TIP or detect field obstacles.
 
 ## Game basis
 
