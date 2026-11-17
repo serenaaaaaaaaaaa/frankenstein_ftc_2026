@@ -1,32 +1,25 @@
 # BIOBUZZ autonomous strategy
 
-The robot has four selectable BIOBUZZ OpModes. They use the drivetrain and recognize the current intake, travel motor, flywheel, and optional webcam. The intake and travel motor stay stopped during the current route. HIVE scoring uses the flywheel only; there is no windmill feeder on this robot.
+The robot has four selectable BIOBUZZ OpModes. They use encoder-controlled mecanum drive, IMU heading correction, optional AprilTag aiming, the flywheel, and the `travelmotor` feeder. The intake stays stopped during AUTO.
 
 | Driver Station OpMode | Start | Current route | Current goal |
 | --- | --- | --- | --- |
-| `BIOBUZZ Red - Loading` | Red wall beside the red LOADING ZONE | Forward, scoring placeholder, strafe right | LEAVE + PARK |
-| `BIOBUZZ Blue - Loading` | Blue wall beside the blue LOADING ZONE | Forward, scoring placeholder, strafe right | LEAVE + PARK |
-| `BIOBUZZ Red - Garden` | Red garden-side wall | Forward, scoring placeholder, hold | LEAVE |
-| `BIOBUZZ Blue - Garden` | Blue garden-side wall | Forward, scoring placeholder, hold | LEAVE |
+| `BIOBUZZ Red - Loading` | Red wall beside the red LOADING ZONE | LEAVE, aim, shoot four, strafe right | SCORE + PARK |
+| `BIOBUZZ Blue - Loading` | Blue wall beside the blue LOADING ZONE | LEAVE, aim, shoot four, strafe right | SCORE + PARK |
+| `BIOBUZZ Red - Garden` | Red garden-side wall | LEAVE, aim, shoot four, hold | SCORE + LEAVE |
+| `BIOBUZZ Blue - Garden` | Blue garden-side wall | LEAVE, aim, shoot four, hold | SCORE + LEAVE |
 
 For every route, the robot starts with its back touching the perimeter and its front facing the field center. For a loading route, stage immediately beside your alliance's LOADING ZONE, fully outside it, with the zone on the robot's right. Keep the route clear of the HIVE, alliance partner, and loose game elements.
 
-## What works now
+## Movement and aiming
 
-Until encoder calibration is available, the robot uses a conservative timed fallback:
+The robot now uses drive encoders with IMU heading correction. The baseline assumes 537.7 encoder ticks per motor revolution and 96 mm mecanum wheels. `FORWARD_CORRECTION` starts at `1.00`, while `STRAFE_CORRECTION` starts at `1.12` to account for mecanum slip.
 
-- drive forward at 30% power for 1.00 second to attempt LEAVE;
-- for loading starts, strafe right at 30% power for 0.55 second to attempt PARK;
-- stop every drive and intake output before the OpMode exits;
-- abort powered motion at STOP or before the 30-second AUTO period ends.
+Validate each correction with a 24-inch floor test. Update it using `old correction * commanded distance / measured distance`. For example, if a commanded 24 inches travels 22 inches, multiply that correction by `24 / 22`.
 
-These times are filler measurements, so test with wheels raised first and then on a marked practice field. Tune `TIMED_LEAVE_SECONDS` and `TIMED_PARK_STRAFE_SECONDS` in `BioBuzzAutoBase.java`. Confirm the robot clears the perimeter wall for LEAVE and finishes partly inside its own LOADING ZONE for PARK.
+The IMU is configured for a REV Hub mounted logo-up with its USB port facing forward. Change the two `RevHubOrientationOnRobot` directions if the Control Hub is mounted differently. LEAVE and PARK correct yaw drift and include wheel-stall detection.
 
-## Encoder upgrade already wired in
-
-Enter measured `FORWARD_TICKS_PER_INCH` and `STRAFE_TICKS_PER_INCH` in `BioBuzzAutoBase.java`. Once both values are above zero, all four routines automatically switch from timed motion to relative encoder targets with wheel-stall detection.
-
-To measure a scale, record all four drive encoder positions, move a measured distance, calculate each absolute encoder change, average the four changes, and divide by inches moved. Measure forward and sideways separately.
+Before shooting, `Webcam 1` centers red HIVE tags 30-37 or blue HIVE tags 38-45 to within 1.5 degrees. If no alliance target is visible, the robot safely returns to its zero-degree starting heading. Tune `CAMERA_TO_LAUNCHER_OFFSET_DEGREES` if the webcam and launcher do not point in exactly the same direction.
 
 ## Scoring filler
 

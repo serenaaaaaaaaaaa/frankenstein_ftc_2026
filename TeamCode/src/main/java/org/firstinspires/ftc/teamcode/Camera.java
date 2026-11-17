@@ -62,6 +62,25 @@ public final class Camera implements AutoCloseable {
                 ? detection.ftcPose.bearing : Double.NaN;
     }
 
+    /** Returns the bearing of the closest-to-center requested tag. */
+    public double bestBearingDegrees(int[] targetIds) {
+        if (aprilTag == null) return Double.NaN;
+        double bestBearing = Double.NaN;
+        for (AprilTagDetection detection : aprilTag.getDetections()) {
+            if (detection.ftcPose == null || !contains(targetIds, detectionId(detection))) continue;
+            double bearing = detection.ftcPose.bearing;
+            if (Double.isNaN(bestBearing) || Math.abs(bearing) < Math.abs(bestBearing)) {
+                bestBearing = bearing;
+            }
+        }
+        return bestBearing;
+    }
+
+    private static boolean contains(int[] values, int target) {
+        for (int value : values) if (value == target) return true;
+        return false;
+    }
+
     @Override
     public void close() {
         if (visionPortal != null) visionPortal.close();
