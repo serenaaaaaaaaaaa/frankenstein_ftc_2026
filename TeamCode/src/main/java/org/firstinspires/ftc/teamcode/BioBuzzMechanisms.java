@@ -10,8 +10,8 @@ final class BioBuzzMechanisms {
     private static final double FLYWHEEL_POWER = -0.9;
     private static final double WINDMILL_POWER = -0.9;
 
-    // Keep false until the robot is physically staged at a safe HIVE launch position.
-    private static final boolean ENABLE_HIVE_SCORING = false;
+    // Enabled for robot testing. The AUTO start must place the outtake toward the HIVE.
+    private static final boolean ENABLE_HIVE_SCORING = true;
     private static final long FLYWHEEL_SPINUP_MS = 1200; // Initial filler value; tune on robot.
     private static final long FOUR_POLLEN_FEED_MS = 2500; // Initial filler value; tune on robot.
 

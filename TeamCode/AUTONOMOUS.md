@@ -1,6 +1,6 @@
 # BIOBUZZ autonomous strategy
 
-The robot has four selectable BIOBUZZ OpModes. They use the drivetrain and recognize the current intake, travel motor, windmill, flywheel, and optional webcam. The intake and travel motor stay stopped during the current route. The tested windmill/flywheel directions are wired into the scoring phase, but scoring remains disabled until the robot has a field-tested HIVE route and timing.
+The robot has four selectable BIOBUZZ OpModes. They use the drivetrain and recognize the current intake, travel motor, windmill, flywheel, and optional webcam. The intake and travel motor stay stopped during the current route. HIVE scoring is enabled using the tested windmill/flywheel directions.
 
 | Driver Station OpMode | Start | Current route | Current goal |
 | --- | --- | --- | --- |
@@ -39,9 +39,9 @@ To measure a scale, record all four drive encoder positions, move a measured dis
 5. stop every mechanism;
 6. continue to PARK even when scoring is unavailable.
 
-It is disabled with `ENABLE_HIVE_SCORING = false`. The code uses the existing `-0.9` flywheel/windmill direction and includes initial filler values of 1.2 seconds spin-up and 2.5 seconds feed. The physical launch position, travel duration, shot timing, and AprilTag target are still unknown. While disabled, telemetry reports `HIVE scoring: SKIPPED` and no scoring mechanism moves.
+It is enabled with `ENABLE_HIVE_SCORING = true`. The code uses the existing `-0.9` flywheel/windmill direction, spins up for 1.2 seconds, and feeds for 2.5 seconds. The AUTO start and one-second forward movement must leave the outtake aimed safely toward the HIVE. Travel positioning and AprilTag aiming remain disabled.
 
-Do not enable the filler until the launcher exists and every placeholder constant is tested on the robot. The current code does not claim a HIVE TIP or detect field obstacles.
+Test the shot with the drivetrain raised and no POLLEN first, then test one POLLEN from a protected position. The code does not confirm a HIVE TIP or detect field obstacles.
 
 ## Game basis
 
