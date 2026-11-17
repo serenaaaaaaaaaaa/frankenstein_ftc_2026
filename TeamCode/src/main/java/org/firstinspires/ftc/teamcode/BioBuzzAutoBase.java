@@ -47,8 +47,10 @@ public abstract class BioBuzzAutoBase extends LinearOpMode {
                         ? "LEAVE -> score filler -> PARK" : "LEAVE -> score filler -> HOLD");
                 telemetry.addData("Drive mode", encoderMode() ? "ENCODER" : "TIMED FALLBACK");
                 telemetry.addData("Intake", mechanisms.intakeAvailable() ? "FOUND / stopped" : "NOT FOUND");
-                telemetry.addData("Launcher", mechanisms.preloadScoringReady()
-                        ? "READY" : "FILLER DISABLED / scoring skipped");
+                telemetry.addData("Outtake", mechanisms.outtakeAvailable()
+                        ? "FOUND" : "NOT FOUND");
+                telemetry.addData("HIVE scoring", mechanisms.preloadScoringReady()
+                        ? "READY" : "DISABLED until route/timing test");
                 telemetry.addLine("Back touches wall; front faces field center.");
                 if (finishInLoadingZone) {
                     telemetry.addLine("Start beside YOUR loading zone with zone on robot RIGHT.");

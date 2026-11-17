@@ -1,155 +1,69 @@
-
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Gamepad;
-import com.qualcomm.robotcore.util.Range;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 
-public class Drive {
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.vision.VisionPortal;
+import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
+import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
-    private final DcMotor frontLeftMotor;
-    private final DcMotor backLeftMotor;
-    private final DcMotor frontRightMotor;
-    private final DcMotor backRightMotor;
+import java.util.List;
 
-    public double speedMultiplier = 1.0;
+/** Optional webcam/AprilTag helper. Missing camera hardware leaves vision disabled. */
+public final class Camera implements AutoCloseable {
+    public static final String DEFAULT_WEBCAM_NAME = "Webcam 1";
 
-    private boolean lastRB = false;
-    private boolean lastLB = false;
+    private final AprilTagProcessor aprilTag;
+    private final VisionPortal visionPortal;
 
-    // Vision aiming settings
-    private static final double AIM_KP = 0.018;
-    private static final double AIM_TOLERANCE = 1.5;
-    private static final double MAX_AIM_POWER = 0.35;
+    public Camera(HardwareMap hardwareMap) {
+        WebcamName webcam = hardwareMap.tryGet(WebcamName.class, DEFAULT_WEBCAM_NAME);
+        if (webcam == null) {
+            aprilTag = null;
+            visionPortal = null;
+            return;
+        }
 
-    // Change to -1 if testing shows the robot turns away from the tag
-    private static final double AIM_DIRECTION = 1.0;
-
-    public Drive(
-            DcMotor frontLeft,
-            DcMotor backLeft,
-            DcMotor frontRight,
-            DcMotor backRight
-    ) {
-
-        this.frontLeftMotor = frontLeft;
-        this.backLeftMotor = backLeft;
-        this.frontRightMotor = frontRight;
-        this.backRightMotor = backRight;
-
-        // Reverse right-side motors
-        this.frontRightMotor.setDirection(DcMotor.Direction.REVERSE);
-        this.backRightMotor.setDirection(DcMotor.Direction.REVERSE);
+        aprilTag = new AprilTagProcessor.Builder().build();
+        visionPortal = new VisionPortal.Builder()
+                .setCamera(webcam)
+                .addProcessor(aprilTag)
+                .build();
     }
 
-    /**
-     * Main drivetrain update.
-     * Supports manual driving and automatic AprilTag aiming.
-     */
-    public void update(
-            Gamepad gamepad
-    ) {
+    public boolean isAvailable() {
+        return visionPortal != null && aprilTag != null;
+    }
 
-        // Speed adjustment
-        boolean currentRB = gamepad.right_bumper;
-        boolean currentLB = gamepad.left_bumper;
-
-        if (currentRB && !lastRB) {
-            speedMultiplier =
-                    Math.min(1.0, speedMultiplier + 0.1);
-        }
-
-        if (currentLB && !lastLB) {
-            speedMultiplier =
-                    Math.max(0.1, speedMultiplier - 0.1);
-        }
-
-        lastRB = currentRB;
-        lastLB = currentLB;
-
-        // Manual movement
-        double drive = -gamepad.left_stick_y;
-        double strafe = gamepad.left_stick_x;
-
-        double turn;
-
-        // Manual rotation takes priority
-        if (Math.abs(gamepad.right_stick_x) > 0.08) {
-
-            turn = gamepad.right_stick_x;
-
-        }
-
-        // Automatic AprilTag aiming
-        else if (autoAim && targetVisible) {
-
-            if (Math.abs(targetBearing) <= AIM_TOLERANCE) {
-
-                turn = 0;
-
-            } else {
-
-                turn = targetBearing * AIM_KP * AIM_DIRECTION;
-
-                turn = Range.clip(
-                        turn,
-                        -MAX_AIM_POWER,
-                        MAX_AIM_POWER
-                );
+    /** Returns the requested tag, or the first known tag when targetId is negative. */
+    public AprilTagDetection findTag(int targetId) {
+        if (aprilTag == null) return null;
+        List<AprilTagDetection> detections = aprilTag.getDetections();
+        for (AprilTagDetection detection : detections) {
+            if (targetId < 0 || detectionId(detection) == targetId) {
+                return detection;
             }
-
-        } else {
-
-            // No target or aiming disabled
-            turn = 0;
         }
-
-        // Mecanum calculations
-        double fLeftPow =
-                drive + turn + strafe;
-
-        double bLeftPow =
-                drive + turn - strafe;
-
-        double fRightPow =
-                drive - turn - strafe;
-
-        double bRightPow =
-                drive - turn + strafe;
-
-        // Apply speed multiplier
-        fLeftPow *= speedMultiplier;
-        bLeftPow *= speedMultiplier;
-        fRightPow *= speedMultiplier;
-        bRightPow *= speedMultiplier;
-
-        // Normalize motor powers together
-        double maxPower = Math.max(
-                Math.max(Math.abs(fLeftPow), Math.abs(bLeftPow)),
-                Math.max(Math.abs(fRightPow), Math.abs(bRightPow))
-        );
-
-        if (maxPower > 1.0) {
-
-            fLeftPow /= maxPower;
-            bLeftPow /= maxPower;
-            fRightPow /= maxPower;
-            bRightPow /= maxPower;
-        }
-
-        // Apply motor powers
-        frontLeftMotor.setPower(fLeftPow);
-        backLeftMotor.setPower(bLeftPow);
-        frontRightMotor.setPower(fRightPow);
-        backRightMotor.setPower(bRightPow);
+        return null;
     }
 
-    // Stop drivetrain
-    public void stop() {
+    /** SDK 12 moved id onto AprilTagSingleDetection; reflection keeps SDK 11 compatibility. */
+    private static int detectionId(AprilTagDetection detection) {
+        try {
+            return detection.getClass().getField("id").getInt(detection);
+        } catch (ReflectiveOperationException ignored) {
+            return Integer.MIN_VALUE;
+        }
+    }
 
-        frontLeftMotor.setPower(0);
-        backLeftMotor.setPower(0);
-        frontRightMotor.setPower(0);
-        backRightMotor.setPower(0);
+    public double bearingDegrees(int targetId) {
+        AprilTagDetection detection = findTag(targetId);
+        return detection != null && detection.ftcPose != null
+                ? detection.ftcPose.bearing : Double.NaN;
+    }
+
+    @Override
+    public void close() {
+        if (visionPortal != null) visionPortal.close();
     }
 }
