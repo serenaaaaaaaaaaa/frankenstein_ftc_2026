@@ -18,7 +18,9 @@ public class Travel {
             travelmotor.setPower(-0.7);
             //travelservo.setPower(-0.9)
         }
-
+        else if (gamepad.cross) {
+            travelmotor.setPower(0.3);
+        }
         // Stop: When released, continuous rotation servos return to stop (0.5)
         else {
             travelmotor.setPower(0.0);

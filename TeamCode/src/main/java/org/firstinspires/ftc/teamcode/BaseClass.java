@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import java.util.List;
@@ -35,6 +36,7 @@ public class BaseClass extends LinearOpMode {
 
     // Outtake Motors
     protected DcMotor flywheel = null;
+    protected Servo outservo;
 
     // Component Instances
     private Drive driveModule;
@@ -57,7 +59,7 @@ public class BaseClass extends LinearOpMode {
         //linearModule = new Linear(leftSlide, rightSlide);
         intakeModule = new Intake(leftIntake, rightIntake, centreIntake);
         travelModule = new Travel(travelmotor);
-        outtakeModule = new Outtake(flywheel);
+        outtakeModule = new Outtake(flywheel, outservo);
 
         telemetry.addData("Status", "Initialized. Ready to start.");
         telemetry.update();
@@ -123,6 +125,7 @@ public class BaseClass extends LinearOpMode {
         travelmotor = hardwareMap.get(DcMotor.class, "travelmotor");
 
         flywheel = hardwareMap.get(DcMotor.class, "flywheel");
+        outservo = hardwareMap.get(Servo.class, "outservo");
 
         //naprilTagReader = new AprilTagReader(hardwareMap);
         
