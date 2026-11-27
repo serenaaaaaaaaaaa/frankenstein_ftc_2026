@@ -35,15 +35,15 @@ public class BaseClass extends LinearOpMode {
     protected DcMotor travelmotor = null;
 
     // Outtake Motors
-    protected DcMotor flywheel = null;
-    protected Servo outservo;
+    // protected DcMotor flywheel;
+    // protected Servo outservo;
 
     // Component Instances
     private Drive driveModule;
     //private Linear linearModule;
     private Intake intakeModule;
     private Travel travelModule;
-    private Outtake outtakeModule;
+    // private Outtake outtakeModule;
     //private AprilTagReader aprilTagReader;
 
     // Global Variables
@@ -59,7 +59,7 @@ public class BaseClass extends LinearOpMode {
         //linearModule = new Linear(leftSlide, rightSlide);
         intakeModule = new Intake(leftIntake, rightIntake, centreIntake);
         travelModule = new Travel(travelmotor);
-        outtakeModule = new Outtake(flywheel, outservo);
+        // outtakeModule = new Outtake(flywheel, outservo);
 
         telemetry.addData("Status", "Initialized. Ready to start.");
         telemetry.update();
@@ -74,7 +74,7 @@ public class BaseClass extends LinearOpMode {
             //linearModule.update(gamepad1);
             intakeModule.update(gamepad1);
             travelModule.update(gamepad1);
-            outtakeModule.update(gamepad1);
+            // outtakeModule.update(gamepad1);
 
             // Display status and telemetry profiles
             telemetry.addData("Status", "Running");
@@ -124,8 +124,8 @@ public class BaseClass extends LinearOpMode {
 
         travelmotor = hardwareMap.get(DcMotor.class, "travelmotor");
 
-        flywheel = hardwareMap.get(DcMotor.class, "flywheel");
-        outservo = hardwareMap.get(Servo.class, "outservo");
+        // flywheel = hardwareMap.get(DcMotor.class, "flywheel");
+        // outservo = hardwareMap.get(Servo.class, "outservo");
 
         //naprilTagReader = new AprilTagReader(hardwareMap);
         

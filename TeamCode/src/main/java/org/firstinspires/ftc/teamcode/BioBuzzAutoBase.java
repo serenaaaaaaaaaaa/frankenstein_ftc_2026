@@ -63,14 +63,9 @@ public abstract class BioBuzzAutoBase extends LinearOpMode {
             while (opModeInInit()) {
                 telemetry.addData("BIOBUZZ AUTO", startingPosition);
                 telemetry.addData("Strategy", finishInLoadingZone
-                        ? "LEAVE -> score filler -> PARK" : "LEAVE -> score filler -> HOLD");
+                        ? "LEAVE -> PARK" : "LEAVE -> HOLD");
                 telemetry.addData("Drive mode", "ENCODER + IMU HEADING");
-                telemetry.addData("Vision aim", camera.isAvailable() ? "READY" : "IMU FALLBACK");
-                telemetry.addData("Intake", mechanisms.intakeAvailable() ? "FOUND / stopped" : "NOT FOUND");
-                telemetry.addData("Outtake", mechanisms.outtakeAvailable()
-                        ? "FOUND" : "NOT FOUND");
-                telemetry.addData("HIVE scoring", mechanisms.preloadScoringReady()
-                        ? "READY" : "DISABLED until route/timing test");
+                telemetry.addData("HIVE scoring", "Disabled: drive-only Auto");
                 telemetry.addLine("Back touches wall; front faces field center.");
                 if (finishInLoadingZone) {
                     telemetry.addLine("Start beside YOUR loading zone with zone on robot RIGHT.");
@@ -87,10 +82,8 @@ public abstract class BioBuzzAutoBase extends LinearOpMode {
 
             if (!moveForwardForLeave()) return;
 
-            if (!aimAtHive()) return;
-
-            // Run the flywheel-only preload launch window before completing the route.
-            mechanisms.scoreFourPreloads(this);
+            // Shooter hardware is not installed. Keep the existing scoring hooks for later.
+            // if (aimAtHive()) mechanisms.scoreFourPreloads(this);
             if (!opModeIsActive()) return;
 
             if (finishInLoadingZone) {
@@ -123,8 +116,8 @@ public abstract class BioBuzzAutoBase extends LinearOpMode {
                 RevHubOrientationOnRobot.LogoFacingDirection.UP,
                 RevHubOrientationOnRobot.UsbFacingDirection.FORWARD)));
         imu.resetYaw();
-        camera = new Camera(hardwareMap);
-        mechanisms = new BioBuzzMechanisms(hardwareMap);
+        // camera = new Camera(hardwareMap);
+        // mechanisms = new BioBuzzMechanisms(hardwareMap);
     }
 
     private boolean moveForwardForLeave() throws InterruptedException {
