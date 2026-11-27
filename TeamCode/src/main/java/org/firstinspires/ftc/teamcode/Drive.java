@@ -40,10 +40,10 @@ public class Drive {
         boolean currentRB = gamepad.right_bumper;
         boolean currentLB = gamepad.left_bumper;
 
-        if (currentRB && !lastRB) {
+        if (currentLB && !lastLB) {
             speedMultiplier = Math.min(1.0, speedMultiplier + 0.1);
         }
-        if (currentLB && !lastLB) {
+        if (currentRB && !lastRB) {
             speedMultiplier = Math.max(0.1, speedMultiplier - 0.1);
         }
 
