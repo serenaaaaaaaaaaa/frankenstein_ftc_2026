@@ -79,7 +79,15 @@ public class BaseClass extends LinearOpMode {
 
             // Display status and telemetry profiles
             telemetry.addData("Status", "Running");
-            telemetry.addData("Drive Speed Modifier", "%.1f", driveModule.speedMultiplier);
+            telemetry.addData("Drive speed", "%.0f%%", driveModule.speedMultiplier * 100);
+            if (outtakeModule != null) {
+                double servoPosition = outservo.getPosition();
+                telemetry.addData("Outtake servo target", "%.2f (%.0f%%)", servoPosition, servoPosition * 100);
+                double power = flywheel.getPower();
+                telemetry.addData("Flywheel command", power < 0 ? "Forward" : power > 0 ? "Reverse" : "Off");
+            } else {
+                telemetry.addData("Outtake", "Check flywheel and outservo configuration");
+            }
             //telemetry.addData("Slide Target Position", linearModule.getTargetPosition());
            // telemetry.addData("Slide Real Pos", "L: %d | R: %d",
             //        linearModule.getLeftCurrentPosition(), linearModule.getRightCurrentPosition());
