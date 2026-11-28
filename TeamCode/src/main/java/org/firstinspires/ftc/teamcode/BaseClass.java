@@ -33,15 +33,15 @@ public class BaseClass extends LinearOpMode {
     protected DcMotor travelmotor = null;
 
     // Outtake Motors
-    // protected DcMotor flywheel;
-    // protected Servo outservo;
+    protected DcMotor flywheel;
+    protected Servo outservo;
 
     // Component Instances
     private Drive driveModule;
     //private Linear linearModule;
     private Intake intakeModule;
     private Travel travelModule;
-    // private Outtake outtakeModule;
+    private Outtake outtakeModule;
     //private AprilTagReader aprilTagReader;
 
     // Global Variables
@@ -57,9 +57,12 @@ public class BaseClass extends LinearOpMode {
         //linearModule = new Linear(leftSlide, rightSlide);
         intakeModule = new Intake(centreIntake);
         travelModule = new Travel(travelmotor);
-        // outtakeModule = new Outtake(flywheel, outservo);
+        if (flywheel != null && outservo != null) {
+            outtakeModule = new Outtake(flywheel, outservo);
+        }
 
         telemetry.addData("Status", "Initialized. Ready to start.");
+        telemetry.addData("Outtake", outtakeModule == null ? "Check flywheel and outservo" : "Ready");
         telemetry.update();
 
         waitForStart();
@@ -72,7 +75,7 @@ public class BaseClass extends LinearOpMode {
             //linearModule.update(gamepad1);
             intakeModule.update(gamepad1);
             travelModule.update(gamepad1);
-            // outtakeModule.update(gamepad1);
+            if (outtakeModule != null) outtakeModule.update(gamepad1);
 
             // Display status and telemetry profiles
             telemetry.addData("Status", "Running");
@@ -120,8 +123,9 @@ public class BaseClass extends LinearOpMode {
 
         travelmotor = hardwareMap.get(DcMotor.class, "travelmotor");
 
-        // flywheel = hardwareMap.get(DcMotor.class, "flywheel");
-        // outservo = hardwareMap.get(Servo.class, "outservo");
+        flywheel = hardwareMap.tryGet(DcMotor.class, "flywheel");
+        outservo = hardwareMap.tryGet(Servo.class, "outservo");
+        if (flywheel != null) flywheel.setPower(0);
 
         //naprilTagReader = new AprilTagReader(hardwareMap);
         
