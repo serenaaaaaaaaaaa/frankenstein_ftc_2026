@@ -22,9 +22,6 @@ public class BaseClass extends LinearOpMode {
     protected DcMotor frontLeftMotor = null;
     protected DcMotor frontRightMotor = null;
 
-    // Linear Slide Motors
-    //protected DcMotor leftSlide = null;
-    //protected DcMotor rightSlide = null;
 
     // Intake Motors
     protected DcMotor centreIntake = null;
@@ -34,7 +31,7 @@ public class BaseClass extends LinearOpMode {
 
     // Outtake Motors
     protected DcMotor flywheel;
-    protected Servo outservo;
+    protected CRServo outservo;
 
     // Component Instances
     private Drive driveModule;
@@ -54,7 +51,6 @@ public class BaseClass extends LinearOpMode {
 
         // 2. Initialize the system modules
         driveModule = new Drive(frontLeftMotor, backLeftMotor, frontRightMotor, backRightMotor);
-        //linearModule = new Linear(leftSlide, rightSlide);
         intakeModule = new Intake(centreIntake);
         travelModule = new Travel(travelmotor);
         if (flywheel != null && outservo != null) {
@@ -72,7 +68,6 @@ public class BaseClass extends LinearOpMode {
         while (opModeIsActive()) {
             // Update components with gamepad inputs
             driveModule.update(gamepad1); // Left stick drives, bumpers scale speed
-            //linearModule.update(gamepad1);
             intakeModule.update(gamepad1);
             travelModule.update(gamepad1);
             if (outtakeModule != null) outtakeModule.update(gamepad1);
@@ -81,18 +76,13 @@ public class BaseClass extends LinearOpMode {
             telemetry.addData("Status", "Running");
             telemetry.addData("Drive speed", "%.0f%%", driveModule.speedMultiplier * 100);
             if (outtakeModule != null) {
-                double servoPosition = outservo.getPosition();
+                double servoPosition = outservo.getPower();
                 telemetry.addData("Outtake servo target", "%.2f (%.0f%%)", servoPosition, servoPosition * 100);
                 double power = flywheel.getPower();
                 telemetry.addData("Flywheel command", power < 0 ? "Forward" : power > 0 ? "Reverse" : "Off");
             } else {
                 telemetry.addData("Outtake", "Check flywheel and outservo configuration");
             }
-            //telemetry.addData("Slide Target Position", linearModule.getTargetPosition());
-           // telemetry.addData("Slide Real Pos", "L: %d | R: %d",
-            //        linearModule.getLeftCurrentPosition(), linearModule.getRightCurrentPosition());
-            //telemetry.addData("Slide Power", "L: %d | R: %d",
-            //        linearModule.getLeftPower(), linearModule.getRightPower());
             telemetry.update();
         }
 
@@ -123,19 +113,15 @@ public class BaseClass extends LinearOpMode {
         frontLeftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         frontRightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        // Slide Hardware Mapping
-        //leftSlide = hardwareMap.get(DcMotor.class, "leftSlide");
-        //rightSlide = hardwareMap.get(DcMotor.class, "rightSlide");
-
         centreIntake = hardwareMap.get(DcMotor.class, "centreIntake");
 
         travelmotor = hardwareMap.get(DcMotor.class, "travelmotor");
 
         flywheel = hardwareMap.tryGet(DcMotor.class, "flywheel");
-        outservo = hardwareMap.tryGet(Servo.class, "outservo");
+        outservo = hardwareMap.tryGet(CRServo.class, "outservo");
         if (flywheel != null) flywheel.setPower(0);
 
-        //naprilTagReader = new AprilTagReader(hardwareMap);
+        //aprilTagReader = new AprilTagReader(hardwareMap);
         
         // Encoders initialization is fully handled internally by the Linear class constructor
     }

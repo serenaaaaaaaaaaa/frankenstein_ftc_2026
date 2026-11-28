@@ -1,8 +1,9 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
-import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.CRServo;
 
 public class Outtake {
     private static final double SHOOT_POWER = -0.9;
@@ -10,31 +11,29 @@ public class Outtake {
     private static final double ANGLE_STEP = 0.10;
 
     private final DcMotor flywheel;
-    private final Servo outservo;
+    private final CRServo outservo;
     private boolean lastUp;
     private boolean lastDown;
 
-    public Outtake(DcMotor flywheel, Servo outservo) {
+    public Outtake(DcMotor flywheel, CRServo outservo) {
         this.flywheel = flywheel;
         this.outservo = outservo;
     }
 
-    public void update(Gamepad gamepad) {
-        boolean up = gamepad.dpad_up;
-        boolean down = gamepad.dpad_down;
-        if (up && !lastUp && !down) {
-            outservo.setPosition(Math.min(1.0, outservo.getPosition() + ANGLE_STEP));
-        } else if (down && !lastDown && !up) {
-            outservo.setPosition(Math.max(0.0, outservo.getPosition() - ANGLE_STEP));
+    public void update(Gamepad gamepad1) {
+        if (gamepad1.dpad_up) {
+            outservo.setPower(1.0);
+            flywheel.setPower(-0.9);
         }
-        lastUp = up;
-        lastDown = down;
-
-        double power = 0.0;
-        if (gamepad.dpad_left != gamepad.dpad_right) {
-            power = gamepad.dpad_right ? SHOOT_POWER : REVERSE_POWER;
+        else if (gamepad1.dpad_down) {
+            outservo.setPower(0.0);
+            flywheel.setPower(-0.9);
         }
-        flywheel.setPower(power);
+        // Stop: When released, continuous rotation servos return to stop (0.5)
+        else {
+            flywheel.setPower(0.0);
+            flywheel.setPower(0.0);
+        }
     }
 }
 
