@@ -6,14 +6,8 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.CRServo;
 
 public class Outtake {
-    private static final double SHOOT_POWER = -0.9;
-    private static final double REVERSE_POWER = 0.9;
-    private static final double ANGLE_STEP = 0.10;
-
     private final DcMotor flywheel;
     private final CRServo outservo;
-    private boolean lastUp;
-    private boolean lastDown;
 
     public Outtake(DcMotor flywheel, CRServo outservo) {
         this.flywheel = flywheel;
@@ -29,7 +23,6 @@ public class Outtake {
             outservo.setPower(0.0);
             flywheel.setPower(-0.9);
         }
-        // Stop: When released, continuous rotation servos return to stop (0.5)
         else {
             flywheel.setPower(0.0);
             flywheel.setPower(0.0);
