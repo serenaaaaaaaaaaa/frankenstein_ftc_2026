@@ -25,7 +25,7 @@ public class Outtake {
         }
         else {
             flywheel.setPower(0.0);
-            flywheel.setPower(0.0);
+            outservo.setPower(0.0);
         }
     }
 }
