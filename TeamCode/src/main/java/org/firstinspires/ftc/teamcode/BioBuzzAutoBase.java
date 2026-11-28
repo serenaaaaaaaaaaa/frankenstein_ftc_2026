@@ -23,7 +23,9 @@ public abstract class BioBuzzAutoBase extends LinearOpMode {
             MOTOR_TICKS_PER_REV / (Math.PI * WHEEL_DIAMETER_INCHES) * STRAFE_CORRECTION;
 
     private static final double DRIVE_POWER = 0.30;
-    private static final double LEAVE_DISTANCE_INCHES = 18.0;
+    private static final double GARDEN_LEAVE_DISTANCE_INCHES = 18.0;
+    // The loading zone extends about 11 inches from the wall.
+    private static final double LOADING_LEAVE_DISTANCE_INCHES = 6.0;
     private static final double LOADING_ZONE_STRAFE_INCHES = 8.0;
 
     private static final double AUTO_CUTOFF_SECONDS = 29.0;
@@ -69,6 +71,7 @@ public abstract class BioBuzzAutoBase extends LinearOpMode {
                 telemetry.addLine("Back touches wall; front faces field center.");
                 if (finishInLoadingZone) {
                     telemetry.addLine("Start beside YOUR loading zone with zone on robot RIGHT.");
+                    telemetry.addLine("Leave about 4 inches between robot and zone tape.");
                 } else {
                     telemetry.addLine("Start on garden-side wall, clear of HIVE and partner.");
                 }
@@ -121,7 +124,9 @@ public abstract class BioBuzzAutoBase extends LinearOpMode {
     }
 
     private boolean moveForwardForLeave() throws InterruptedException {
-        return moveByEncoder(LEAVE_DISTANCE_INCHES, 0, "LEAVE");
+        double distance = finishInLoadingZone
+                ? LOADING_LEAVE_DISTANCE_INCHES : GARDEN_LEAVE_DISTANCE_INCHES;
+        return moveByEncoder(distance, 0, "LEAVE");
     }
 
     private boolean moveRightForPark() throws InterruptedException {
