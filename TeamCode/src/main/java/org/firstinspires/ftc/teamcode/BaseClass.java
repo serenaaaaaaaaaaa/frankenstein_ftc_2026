@@ -27,8 +27,6 @@ public class BaseClass extends LinearOpMode {
     //protected DcMotor rightSlide = null;
 
     // Intake Motors
-    protected CRServo leftIntake = null;
-    protected CRServo rightIntake = null;
     protected DcMotor centreIntake = null;
 
     //Travel Motors
@@ -57,7 +55,7 @@ public class BaseClass extends LinearOpMode {
         // 2. Initialize the system modules
         driveModule = new Drive(frontLeftMotor, backLeftMotor, frontRightMotor, backRightMotor);
         //linearModule = new Linear(leftSlide, rightSlide);
-        intakeModule = new Intake(leftIntake, rightIntake, centreIntake);
+        intakeModule = new Intake(centreIntake);
         travelModule = new Travel(travelmotor);
         // outtakeModule = new Outtake(flywheel, outservo);
 
@@ -118,8 +116,6 @@ public class BaseClass extends LinearOpMode {
         //leftSlide = hardwareMap.get(DcMotor.class, "leftSlide");
         //rightSlide = hardwareMap.get(DcMotor.class, "rightSlide");
 
-        leftIntake = hardwareMap.get(CRServo.class, "leftIntake");
-        rightIntake = hardwareMap.get(CRServo.class, "rightIntake");
         centreIntake = hardwareMap.get(DcMotor.class, "centreIntake");
 
         travelmotor = hardwareMap.get(DcMotor.class, "travelmotor");

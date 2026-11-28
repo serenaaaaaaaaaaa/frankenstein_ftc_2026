@@ -5,33 +5,23 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 public class Intake {
-    private final CRServo leftIntake;
-    private final CRServo rightIntake;
     private final DcMotor centreIntake;
 
-    public Intake(CRServo leftIntake, CRServo rightIntake, DcMotor centreIntake) {
-        this.leftIntake = leftIntake;
-        this.rightIntake = rightIntake;
+    public Intake(DcMotor centreIntake){
         this.centreIntake = centreIntake;
     }
 
     public void update(Gamepad gamepad) {
         // Intake when the left trigger is held.
         if (gamepad.left_trigger > 0.1) {
-            leftIntake.setPower(0.9);
-            rightIntake.setPower(-0.9); // Mirrored rotation (0.0 to 1.0 bounds)
             centreIntake.setPower(-0.9);
         }
         // Reverse the intake when the right trigger is held.
         else if (gamepad.right_trigger > 0.1) {
-            leftIntake.setPower(-0.9);
-            rightIntake.setPower(0.9);
             centreIntake.setPower(0.9);
         }
         // Stop: When released, continuous rotation servos return to stop (0.5)
         else {
-            leftIntake.setPower(0.0);
-            rightIntake.setPower(0.0);
             centreIntake.setPower(0.0);
         }
     }
